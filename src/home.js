@@ -1,88 +1,100 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+
+// Helper function to generate all combinations of a given string
+const getCombinations = (letters) => {
+  let results = [];
+
+  const helper = (path, options) => {
+    if (path.length > 0) {
+      results.push(path);
+    }
+    for (let i = 0; i < options.length; i++) {
+      helper(path + options[i], options.slice(i + 1));
+    }
+  };
+
+  helper("", letters.split(""));
+  return results;
+};
 
 function HomePage() {
+  const [letters, setLetters] = useState("");
+  const [error, setError] = useState("");
+  const [validWords, setValidWords] = useState([]);
+  const [generatedWords, setGeneratedWords] = useState([]);
+
+  useEffect(() => {
+    // Load valid words from the text file
+    fetch("/validWords.txt")
+      .then((response) => response.text())
+      .then((text) => {
+        const words = text.split("\n").map((word) => word.trim());
+        setValidWords(words);
+      });
+  }, []);
+
+  const handleChange = (event) => {
+    const value = event.target.value;
+    if (value.length <= 7) {
+      setLetters(value);
+      setError(""); // Clear error message on change
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (letters.length === 7) {
+      const combinations = getCombinations(letters);
+      const validGeneratedWords = combinations.filter((word) =>
+        validWords.includes(word)
+      );
+      setGeneratedWords(validGeneratedWords);
+      console.log("Submitted letters:", letters);
+    } else {
+      setError("Please enter exactly 7 letters.");
+    }
+  };
+
   return (
-    <div>
-      <img src="\homeHero.png" alt="Summer Camp 2024"></img>
-      <div className="bg-white py-6 px-4 md:px-40 m-4 grid md:grid-cols-2 md:gap-x-12 items-center">
-        <img
-          src="/home1.png"
-          className="rounded-lg mx-auto md:order-2"
-          style={{ maxWidth: "100%" }}
-          alt="Home 1"
-        />
-        <div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mt-3 mb-4">Our Vision</h3>
-            <p className="text-gray-700 mb-4">
-              Our vision is to provide a space for students to be academically
-              and socially engaged in a fun and friendly environment. Our goal
-              is to empower each child with the tools and resources they need to
-              navigate the challenges of the upcoming school year with
-              resilience and enthusiasm!
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Link
-              to="/about"
-              className="bg-yellow-400 text-white rounded-full px-4 py-2 hover:bg-yellow-300"
+    <div className="w-full h-screen bg-yellow-400 flex items-center justify-center">
+      <div className="w-full max-w-md p-4 bg-white rounded-lg shadow-md">
+        <h1 className="text-black text-2xl font-bold mb-4">
+          Spelling Bee Solver
+        </h1>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label
+              className="block text-black text-sm font-bold mb-2"
+              htmlFor="letters"
             >
-              Learn More
-            </Link>
+              Enter 7 Letters
+            </label>
+            <input
+              type="text"
+              id="letters"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+              value={letters}
+              onChange={handleChange}
+              maxLength="7"
+            />
           </div>
-        </div>
-      </div>
-      <div className="bg-white py-6 px-4 md:px-40 m-4 grid md:grid-cols-2 md:gap-x-12 items-center">
-        <img
-          src="/home2.png"
-          className="rounded-lg mx-auto"
-          style={{ maxWidth: "100%" }}
-          alt="Home 2"
-        />
-        <div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mt-3 mb-4">Our Program</h3>
-            <p className="text-gray-700 mb-4">
-              Explore the adventure awaiting in our program! From thrilling
-              activities to meaningful moments, discover how our summer camp
-              experience will inspire, challenge, and empower you.
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Link
-              to="/program"
-              className="bg-yellow-400 text-white rounded-full px-4 py-2 hover:bg-yellow-300"
-            >
-              Learn More
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="bg-white py-6 px-4 md:px-40 m-4 grid md:grid-cols-2 md:gap-x-12 items-center">
-        <img
-          src="/home3.png"
-          className="rounded-lg mx-auto md:order-2"
-          style={{ maxWidth: "100%" }}
-          alt="Volunteers"
-        />
-        <div>
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mt-3 mb-4">Become a Volunteer</h3>
-            <p className="text-gray-700 mb-4">
-              Ready to make a difference? Join us as a volunteer and help create
-              unforgettable summer memories for our campers! Click here to learn
-              more and get involved.
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Link
-              to="/volunteer"
-              className="bg-yellow-400 text-white rounded-full px-4 py-2 hover:bg-yellow-300"
-            >
-              Learn More
-            </Link>
-          </div>
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Submit
+          </button>
+        </form>
+        <div className="mt-4">
+          <h2 className="text-black text-xl font-bold mb-2">
+            Generated Words:
+          </h2>
+          <ul className="list-disc list-inside">
+            {generatedWords.map((word, index) => (
+              <li key={index}>{word}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

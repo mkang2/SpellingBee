@@ -1,5 +1,5 @@
-import Header from "./header";
-import Footer from "./footer";
+// import Header from "./header";
+// import Footer from "./footer";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./home";
 import AboutPage from "./about";
@@ -14,7 +14,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
-        <Header />
+        {/* <Header /> */}
         <div className="flex-grow">
           {/* Setup the Router Switch and Routes here */}
           <Routes>
@@ -26,7 +26,7 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </Router>
   );
