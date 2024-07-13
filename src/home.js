@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-// Helper function to generate all combinations of a given string
-const getCombinations = (letters) => {
+// Helper function to generate all permutations of a given string with repeated letters
+const getPermutations = (letters) => {
   let results = [];
 
   const helper = (path, options) => {
@@ -9,12 +9,15 @@ const getCombinations = (letters) => {
       results.push(path);
     }
     for (let i = 0; i < options.length; i++) {
-      helper(path + options[i], options.slice(i + 1));
+      helper(
+        path + options[i],
+        options.slice(0, i).concat(options.slice(i + 1))
+      );
     }
   };
 
   helper("", letters.split(""));
-  return results;
+  return Array.from(new Set(results)); // Remove duplicates
 };
 
 function HomePage() {
@@ -25,7 +28,7 @@ function HomePage() {
 
   useEffect(() => {
     // Load valid words from the text file
-    fetch("/validWords.txt")
+    fetch("/validWords2.txt")
       .then((response) => response.text())
       .then((text) => {
         const words = text.split("\n").map((word) => word.trim());
@@ -44,8 +47,8 @@ function HomePage() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (letters.length === 7) {
-      const combinations = getCombinations(letters);
-      const validGeneratedWords = combinations.filter((word) =>
+      const permutations = getPermutations(letters);
+      const validGeneratedWords = permutations.filter((word) =>
         validWords.includes(word)
       );
       setGeneratedWords(validGeneratedWords);
