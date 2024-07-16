@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-// Helper function to generate all permutations of a given string with repeated letters
-const getPermutations = (letters) => {
-  let results = [];
-
-  const helper = (path, options) => {
-    if (path.length > 0) {
-      results.push(path);
+// Helper function to check if a word can be formed from the given letters
+const canFormWord = (word, letters) => {
+  for (const letter of word) {
+    if (!letters.includes(letter)) {
+      return false;
     }
-    for (let i = 0; i < options.length; i++) {
-      helper(
-        path + options[i],
-        options.slice(0, i).concat(options.slice(i + 1))
-      );
-    }
-  };
-
-  helper("", letters.split(""));
-  return Array.from(new Set(results)); // Remove duplicates
+  }
+  return true;
 };
 
 function HomePage() {
@@ -31,25 +21,27 @@ function HomePage() {
     fetch("/validWords2.txt")
       .then((response) => response.text())
       .then((text) => {
-        const words = text.split("\n").map((word) => word.trim());
+        const words = text.split("\n").map((word) => word.trim().toLowerCase());
         setValidWords(words);
       });
   }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;
-    if (value.length <= 7) {
-      setLetters(value);
+    if (/^[a-zA-Z]*$/.test(value) && value.length <= 7) {
+      setLetters(value.toLowerCase());
       setError(""); // Clear error message on change
+    } else {
+      setError("Please enter only letters.");
     }
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (letters.length === 7) {
-      const permutations = getPermutations(letters);
-      const validGeneratedWords = permutations.filter((word) =>
-        validWords.includes(word)
+      const firstLetter = letters[0];
+      const validGeneratedWords = validWords.filter(
+        (word) => word.includes(firstLetter) && canFormWord(word, letters)
       );
       setGeneratedWords(validGeneratedWords);
       console.log("Submitted letters:", letters);
@@ -59,10 +51,10 @@ function HomePage() {
   };
 
   return (
-    <div className="w-full h-screen bg-yellow-400 flex items-center justify-center">
+    <div className="w-full h-screen bg-[#f3db24] flex items-center justify-center">
       <div className="w-full max-w-md p-4 bg-white rounded-lg shadow-md">
         <h1 className="text-black text-2xl font-bold mb-4">
-          Spelling Bee Solver
+          NYT Spelling Bee Solver
         </h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -93,11 +85,13 @@ function HomePage() {
           <h2 className="text-black text-xl font-bold mb-2">
             Generated Words:
           </h2>
-          <ul className="list-disc list-inside">
-            {generatedWords.map((word, index) => (
-              <li key={index}>{word}</li>
-            ))}
-          </ul>
+          <div className="max-h-60 overflow-y-auto">
+            <ul className="list-disc list-inside">
+              {generatedWords.map((word, index) => (
+                <li key={index}>{word}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
