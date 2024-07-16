@@ -30,7 +30,7 @@ function HomePage() {
     const value = event.target.value;
     if (/^[a-zA-Z]*$/.test(value) && value.length <= 7) {
       setLetters(value.toLowerCase());
-      setError(""); // Clear error message on change
+      setError("");
     } else {
       setError("Please enter only letters.");
     }
@@ -59,10 +59,15 @@ function HomePage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
-              className="block text-black text-sm font-bold mb-2"
+              className="block text-black text-sm font-semibold mb-2"
               htmlFor="letters"
             >
-              Enter 7 Letters
+              Note: not all generated words are necessarily valid, still working
+              on word list
+              <br></br>
+              <br></br>
+              Enter the 7 letters with the first letter as the required center
+              letter
             </label>
             <input
               type="text"
