@@ -1,19 +1,14 @@
-# Define the input and output file names
-input_file = "public/validWords.txt"
-output_file = 'public/validWords2.txt'
+def remove_capital_words(input_file, output_file):
+    with open(input_file, 'r') as infile:
+        words = infile.readlines()
 
-def is_valid_word(word):
-    return len(word) >= 4 and word.isalpha()
+    # Filter out words that start with a capital letter
+    filtered_words = [word for word in words if not word.strip().startswith(tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ'))]
 
-# Open the input file and read its contents
-with open(input_file, 'r') as file:
-    lines = file.readlines()
+    with open(output_file, 'w') as outfile:
+        outfile.writelines(filtered_words)
 
-# Filter out invalid words
-filtered_lines = [line for line in lines if is_valid_word(line.strip())]
-
-# Write the filtered words to the output file
-with open(output_file, 'w') as file:
-    file.writelines(line for line in filtered_lines)
-
-print(f"Filtered words saved to {output_file}")
+# Usage example
+input_file = 'public/validWords2.txt'
+output_file = 'public/validWords3.txt'
+remove_capital_words(input_file, output_file)
