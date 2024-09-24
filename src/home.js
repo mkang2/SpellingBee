@@ -27,10 +27,16 @@ function HomePage() {
   }, []);
 
   const handleChange = (event) => {
-    const value = event.target.value;
-    if (/^[a-zA-Z]*$/.test(value) && value.length <= 7) {
-      setLetters(value.toLowerCase());
+    const value = event.target.value.toLowerCase();
+    const hasDuplicate = new Set(value).size !== value.length;
+
+    if (hasDuplicate) {
+      setError("Please enter each letter only once.");
+    } else if (/^[a-zA-Z]*$/.test(value) && value.length <= 7) {
+      setLetters(value);
       setError("");
+    } else if (value.length > 7) {
+      setError("Please enter exactly 7 letters.");
     } else {
       setError("Please enter only letters.");
     }
@@ -62,10 +68,6 @@ function HomePage() {
               className="block text-black text-sm font-semibold mb-2"
               htmlFor="letters"
             >
-              Note: not all generated words are necessarily valid, still working
-              on word list
-              <br></br>
-              <br></br>
               Enter the 7 letters with the first letter as the required center
               letter
             </label>
@@ -98,6 +100,12 @@ function HomePage() {
             </ul>
           </div>
         </div>
+        <br></br>
+        <a href="https://www.nytimes.com/puzzles/spelling-bee" target="_blank">
+          <button className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+            Play Spelling Bee
+          </button>
+        </a>
       </div>
     </div>
   );
