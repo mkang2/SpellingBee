@@ -18,7 +18,7 @@ function HomePage() {
 
   useEffect(() => {
     // Load valid words from the text file
-    fetch("/validWords3.txt")
+    fetch("/validWords.txt")
       .then((response) => response.text())
       .then((text) => {
         const words = text.split("\n").map((word) => word.trim().toLowerCase());
