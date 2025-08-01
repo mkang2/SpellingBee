@@ -27,8 +27,3 @@ def filter_words(input_file, output_file):
     with open(output_file, 'w') as file:
         for word in valid_words:
             file.write(word + '\n')
-
-# Usage example
-input_file = 'public/validWords3.txt'
-output_file = 'public/validWords.txt'
-filter_words(input_file, output_file)
